@@ -1,7 +1,7 @@
 # Fruitify
 
 Fruitify is a simple fruit recognition project implemented in Python using the TensorFlow framework and Keras library. It allows you to predict the type of fruit present in an image.
-
+[![CodeFactor](https://www.codefactor.io/repository/github/aryainjas/fruitify/badge)](https://www.codefactor.io/repository/github/aryainjas/fruitify)
 ![moz](https://github.com/aryainjas/Fruitify/assets/36337300/5a13102a-59fc-4f43-b206-215d27e8abc1)
 #
 ![sib ghermez](https://github.com/aryainjas/Fruitify/assets/36337300/b83af9d0-2bd0-4c9a-8810-dbcdc83083dc)
