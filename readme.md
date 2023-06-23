@@ -10,7 +10,7 @@ To run this project, you need to follow these steps:
 pip install tensorflow keras pillow
 
 
-2. Download the trained model file (`keras_Model.h5`) and class labels file (`labels.txt`) to the same directory as your Python script.
+2. Download the trained model file (`mive-doost-dari?.h5`) and class labels file (`labels.txt`) to the same directory as your Python script.
 
 3. Replace the placeholder image path (`"moz.png"`) in the code with the path to your fruit photo that you want to classify.
 
