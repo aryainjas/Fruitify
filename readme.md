@@ -86,3 +86,5 @@ The dataset for this project has been pre-trained using the following configurat
 These parameters were used during the training process to optimize the model's performance in recognizing various fruit types.
 The dataset used for training in this project consists of 9,478 photos.
 For the training of the dataset, approximately half of the photos were sourced from open data and publicly available datasets. The remaining photos were captured and collected specifically for this project, ensuring a diverse and comprehensive collection of fruit images. Additionally, new photos were created from the existing images to further augment the dataset and enhance the training process.
+![conf-matrix](https://github.com/aryainjas/Fruitify/assets/36337300/cd1e98fd-6b73-4c19-b367-5ee763827eb0)
+
