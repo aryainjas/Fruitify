@@ -8,21 +8,21 @@ Fruitify is a simple fruit recognition project implemented in Python using the T
 ![sib ghermez](https://github.com/aryainjas/Fruitify/assets/36337300/b83af9d0-2bd0-4c9a-8810-dbcdc83083dc)
 
 ## Translate:
-Apple (red) : sib (ghermez)
-Apple (yellow) : sib (zard)
-Banana : moz 
-Apricot : zardaloo
-Avocado : Avocado
-Tangerine : narengi
-Dates : khorma
-Kiwi : kiwi
-Lemon : limoo
-Mulberry : toot
-Peach fig : hooloo anjiri
-pear : golabi
-Orange : porteghal
-Pineapple : ananas
-tomato : goje
+#Apple (red) : sib (ghermez)
+#Apple (yellow) : sib (zard)
+#Banana : moz 
+#Apricot : zardaloo
+#Avocado : Avocado
+#Tangerine : narengi
+#Dates : khorma
+#Kiwi : kiwi
+#Lemon : limoo
+#Mulberry : toot
+#Peach fig : hooloo anjiri
+#pear : golabi
+#Orange : porteghal
+#Pineapple : ananas
+#tomato : goje
 
 ## Setup
 
