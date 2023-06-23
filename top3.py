@@ -1,7 +1,7 @@
 from keras.models import load_model
 from PIL import Image, ImageOps
 import numpy as np
-model = load_model("keras_Model.h5", compile=True)
+model = load_model("mive-doost-dari?.h5", compile=True)
 class_names = open("labels.txt", "r").readlines()
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 image = Image.open("moz.png").convert("RGB") #change the "moz.png" to your fruit photo address , if it is not in the same directory.
