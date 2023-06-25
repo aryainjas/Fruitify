@@ -49,7 +49,7 @@ from PIL import Image, ImageOps
 import numpy as np
 
 # Load the pre-trained model
-model = load_model("keras_Model.h5", compile=True)
+model = load_model("mive-doost-dari?.h5", compile=True)
 
 # Read the class names from the labels file
 class_names = open("labels.txt", "r").readlines()
@@ -83,7 +83,65 @@ The dataset for this project has been pre-trained using the following configurat
 - Epochs: 100
 - Batch Size: 32
 - Learning Rate: 0.001
+I utilized the provided code below to train my model.
+```python
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
+image_directory = '/path/to/images'
+labels_file = '/path/to/labels.txt'
+
+with open(labels_file, 'r') as f:
+    labels = f.read().splitlines()
+
+datagen = ImageDataGenerator(
+    rescale=1.0 / 255.0,
+    rotation_range=20,
+    width_shift_range=0.1,
+    height_shift_range=0.1,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True,
+    validation_split=0.2  
+)
+
+train_generator = datagen.flow_from_directory(
+    image_directory,
+    target_size=(224, 224),  
+    batch_size=32,
+    class_mode='categorical',
+    subset='training'
+)
+
+val_generator = datagen.flow_from_directory(
+    image_directory,
+    target_size=(224, 224),
+    batch_size=32,
+    class_mode='categorical',
+    subset='validation'
+)
+
+model = tf.keras.models.Sequential([
+    tf.keras.applications.MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights='imagenet'),
+    tf.keras.layers.GlobalAveragePooling2D(),
+    tf.keras.layers.Dense(len(labels), activation='softmax')
+])
+
+optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
+
+model.fit(
+    train_generator,
+    steps_per_epoch=train_generator.samples // train_generator.batch_size,
+    validation_data=val_generator,
+    validation_steps=val_generator.samples // val_generator.batch_size,
+    epochs=100
+)
+
+model.save('mive-doost-dari?.h5')
+with open('labels.txt', 'w') as f:
+    f.write('\n'.join(labels))
+ ```
 These parameters were used during the training process to optimize the model's performance in recognizing various fruit types.
 The dataset used for training in this project consists of 9,478 photos.
 For the training of the dataset, approximately half of the photos were sourced from open data and publicly available datasets. The remaining photos were captured and collected specifically for this project, ensuring a diverse and comprehensive collection of fruit images. Additionally, new photos were created from the existing images to further augment the dataset and enhance the training process.
