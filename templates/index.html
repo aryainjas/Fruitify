@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit Classifier Fun!</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f8f9fa; text-align: center; }
+        .container { background-color: #ffffff; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: inline-block; }
+        h1 { color: #4CAF50; /* A fruity green */ margin-bottom: 20px; }
+        #uploadedImage { max-width: 300px; max-height: 300px; margin-top: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        #predictionResult { margin-top: 20px; font-size: 1.1em; }
+        #predictionResult ul { list-style-type: none; padding: 0; }
+        #predictionResult li { background-color: #e9f5e9; border: 1px solid #d4e9d4; margin-bottom: 8px; padding: 10px; border-radius: 5px; font-size: 1.1em; }
+        #predictionResult li strong { color: #388E3C; } /* Darker green for class name */
+        .file-input-wrapper { margin: 20px 0; }
+        /* .file-input-wrapper input[type="file"] { padding: 10px; border: 1px solid #ccc; border-radius: 5px; } */ /* Original style, will be replaced by label styling */
+        .file-upload-label {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #FF9800; /* Fruity orange */
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: bold;
+        }
+        .file-upload-label:hover {
+            background-color: #e68a00; /* Darker orange */
+        }
+        .loader {
+            border: 5px solid #f3f3f3; /* Light grey */
+            border-top: 5px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none; /* Hidden by default */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍓 What Fruit Is This? 🍌</h1>
+        <p>Upload an image and let's see if our magical fruit predictor knows it!</p>
+
+        <div class="file-input-wrapper">
+            <label for="imageUpload" class="file-upload-label">
+                Choose a fruit image! 🍉
+            </label>
+            <input type="file" id="imageUpload" accept="image/*" style="display:none;">
+        </div>
+
+        <div>
+            <img id="uploadedImage" src="#" alt="Uploaded Image" style="display:none;"/>
+        </div>
+
+        <div id="loader" class="loader"></div>
+
+        <div id="predictionResult">
+            <p>Upload a fruit image and let the magic happen! ✨</p>
+        </div>
+    </div>
+
+    <script>
+        const imageUpload = document.getElementById('imageUpload');
+        const uploadedImage = document.getElementById('uploadedImage');
+        const predictionResult = document.getElementById('predictionResult');
+        const loader = document.getElementById('loader');
+
+        imageUpload.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Display the uploaded image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImage.src = e.target.result;
+                    uploadedImage.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+
+                // Clear previous results and show loader
+                predictionResult.innerHTML = '<p>Working my fruit magic... 🍎🍊🍌</p>';
+                loader.style.display = 'block';
+
+                // Prepare data and send to backend
+                const formData = new FormData();
+                formData.append('file', file);
+
+                fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        // Try to parse error response if it's JSON
+                        return response.json().then(err => {
+                            throw new Error(`Server error: ${err.error || response.statusText}`);
+                        }).catch(() => {
+                            // Fallback if error response is not JSON
+                            throw new Error(`Server error: ${response.statusText} (Status: ${response.status})`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    loader.style.display = 'none'; // Hide loader
+                    if (data.error) {
+                        predictionResult.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+                         if (data.details) {
+                            predictionResult.innerHTML += `<p style="color: red; font-size: 0.8em;">Details: ${data.details}</p>`;
+                        }
+                    } else if (data.predictions && data.predictions.length > 0) {
+                        let resultHTML = '<h3>Voilà! I think it\'s one of these:</h3>';
+                        const topPrediction = data.predictions[0];
+                        if (topPrediction.confidence_score > 0.9) {
+                            resultHTML += `<p style="font-style: italic; color: #2E7D32;">Wow, I'm pretty sure that's a <strong>${topPrediction.class_name}</strong>!</p>`;
+                        } else if (topPrediction.confidence_score > 0.7) {
+                            resultHTML += `<p style="font-style: italic; color: #2E7D32;">That looks like a tasty <strong>${topPrediction.class_name}</strong>!</p>`;
+                        }
+                        resultHTML += '<ul>';
+                        data.predictions.forEach(pred => {
+                            resultHTML += `<li><strong>${pred.class_name}</strong>: ${(pred.confidence_score * 100).toFixed(2)}%</li>`;
+                        });
+                        resultHTML += '</ul>';
+                        predictionResult.innerHTML = resultHTML;
+                    } else {
+                        predictionResult.innerHTML = '<p>No predictions received. Try another image!</p>';
+                    }
+                })
+                .catch(error => {
+                    loader.style.display = 'none'; // Hide loader
+                    console.error('Fetch Error:', error);
+                    predictionResult.innerHTML = `<p style="color: red;">Oops! Something went wrong: ${error.message}</p><p style="color: red; font-size: 0.8em;">Please check the console for more details or try again.</p>`;
+                });
+            } else {
+                uploadedImage.style.display = 'none';
+                predictionResult.innerHTML = '<p>Upload a fruit image and let the magic happen! ✨</p>';
+                loader.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
