@@ -83,12 +83,33 @@ python top3.py --model custom_model.h5 --labels custom_labels.txt moz.png
 python top3.py --help
 ```
 
+### Batch Processing (batch_predict.py)
+Process multiple images at once and save results to CSV:
+
+```bash
+# Process all images in current directory
+python batch_predict.py
+
+# Process images in a specific directory
+python batch_predict.py --input /path/to/images
+
+# Save results to a specific file
+python batch_predict.py --output my_results.csv
+
+# Process specific images
+python batch_predict.py --files image1.jpg image2.png image3.jpg
+
+# Show help
+python batch_predict.py --help
+```
+
 ### Features:
 - **Command-line argument support**: No need to edit code to change image paths
 - **Error handling**: Clear error messages for missing files or invalid images
 - **Flexible options**: Customize model, labels, and number of predictions
 - **Better output formatting**: Clean, readable prediction results
 - **Help documentation**: Built-in help with `--help` flag
+- **Batch processing**: Process multiple images and export results to CSV
 
 ### Legacy Code Example
 If you prefer to use the code programmatically, here's the original approach:
@@ -199,4 +220,27 @@ These parameters were used during the training process to optimize the model's p
 The dataset used for training in this project consists of 9,478 photos.
 For the training of the dataset, approximately half of the photos were sourced from open data and publicly available datasets. The remaining photos were captured and collected specifically for this project, ensuring a diverse and comprehensive collection of fruit images. Additionally, new photos were created from the existing images to further augment the dataset and enhance the training process.
 ![conf-matrix](https://github.com/aryainjas/Fruitify/assets/36337300/cd1e98fd-6b73-4c19-b367-5ee763827eb0)
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
+
+## Project Structure
+
+```
+Fruitify/
+├── main.py              # Single prediction with CLI interface
+├── top3.py              # Top N predictions with CLI interface
+├── batch_predict.py     # Batch processing for multiple images
+├── requirements.txt     # Python dependencies
+├── labels.txt           # Fruit class labels (15 classes)
+├── mive-doost-dari?.h5 # Pre-trained MobileNetV2 model
+├── readme.md            # Project documentation
+├── CONTRIBUTING.md      # Contribution guidelines
+└── *.jpg, *.png         # Sample fruit images for testing
+```
+
+## License
+
+This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
 

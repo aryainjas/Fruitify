@@ -121,7 +121,12 @@ Examples:
             return 1
         
         print(f"Loading model from {args.model}...")
-        model = load_model(args.model, compile=True)
+        try:
+            model = load_model(args.model, compile=False)
+        except Exception as e:
+            print(f"Error loading model: {e}", file=sys.stderr)
+            print("Note: Model compatibility issues may occur with different TensorFlow/Keras versions.", file=sys.stderr)
+            return 1
         
         # Load class names
         print(f"Loading labels from {args.labels}...")
