@@ -134,6 +134,9 @@ Examples:
         
         print(f"Loading model from {args.model}...")
         try:
+            # Note: compile=False is used to avoid compatibility issues between
+            # different TensorFlow/Keras versions. This may slightly impact
+            # inference speed but ensures broader compatibility.
             model = load_model(args.model, compile=False)
         except Exception as e:
             print(f"Error loading model: {e}", file=sys.stderr)

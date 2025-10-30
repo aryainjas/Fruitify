@@ -144,6 +144,11 @@ Examples:
         default="labels.txt",
         help="Path to the labels file (default: labels.txt)"
     )
+    parser.add_argument(
+        "--include-samples",
+        action="store_true",
+        help="Include sample images (goje.jpg, moz.png, etc.) when scanning directory"
+    )
     
     args = parser.parse_args()
     
@@ -155,6 +160,9 @@ Examples:
         
         print(f"Loading model from {args.model}...")
         try:
+            # Note: compile=False is used to avoid compatibility issues between
+            # different TensorFlow/Keras versions. This may slightly impact
+            # inference speed but ensures broader compatibility.
             model = load_model(args.model, compile=False)
         except Exception as e:
             print(f"Error loading model: {e}", file=sys.stderr)
@@ -172,9 +180,10 @@ Examples:
         else:
             print(f"Scanning directory: {args.input}")
             image_files = get_image_files(args.input)
-            # Filter out sample images that come with the repo
-            sample_images = {'goje.jpg', 'moz.png', 'porteghal.png', 'sibg.png'}
-            image_files = [f for f in image_files if f.name not in sample_images]
+            # Optionally filter out sample images that come with the repo
+            if not args.include_samples:
+                sample_images = {'goje.jpg', 'moz.png', 'porteghal.png', 'sibg.png'}
+                image_files = [f for f in image_files if f.name not in sample_images]
             print(f"Found {len(image_files)} images to process...")
         
         if not image_files:
