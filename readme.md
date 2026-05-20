@@ -26,22 +26,93 @@ Fruitify is a simple fruit recognition project implemented in Python using the T
 
 ## Setup
 
-
 To run this project, you need to follow these steps:
 
 1. Install the required dependencies by running the following command:
-pip install tensorflow keras pillow
+```bash
+pip install -r requirements.txt
+```
 
+Alternatively, you can install the packages individually:
+```bash
+pip install tensorflow keras pillow numpy
+```
 
-2. Download the trained model file (`mive-doost-dari?.h5`) and class labels file (`labels.txt`) to the same directory as your Python script.
+2. Ensure the trained model file (`mive-doost-dari?.h5`) and class labels file (`labels.txt`) are in the same directory as your Python scripts.
 
-3. Replace the placeholder image path (`"moz.png"`) in the code with the path to your fruit photo that you want to classify.
-
-4. Execute the Python script to see the predictions.
+3. Run the classification script with your fruit image.
 
 ## Usage
 
-After setting up the project, you can use the following code snippet to classify a fruit image:
+The project now includes two enhanced scripts with command-line interfaces:
+
+### Single Prediction (main.py)
+Get the most likely fruit classification:
+
+```bash
+# Basic usage with default image (goje.jpg)
+python main.py
+
+# Classify a specific image
+python main.py moz.png
+
+# Use custom model and labels
+python main.py --model custom_model.h5 --labels custom_labels.txt sibg.png
+
+# Show help
+python main.py --help
+```
+
+### Top 3 Predictions (top3.py)
+Get the top 3 most likely classifications:
+
+```bash
+# Basic usage with default image (moz.png)
+python top3.py
+
+# Classify a specific image
+python top3.py porteghal.png
+
+# Get top 5 predictions instead of 3
+python top3.py --top 5 goje.jpg
+
+# Use custom model and labels
+python top3.py --model custom_model.h5 --labels custom_labels.txt moz.png
+
+# Show help
+python top3.py --help
+```
+
+### Batch Processing (batch_predict.py)
+Process multiple images at once and save results to CSV:
+
+```bash
+# Process all images in current directory
+python batch_predict.py
+
+# Process images in a specific directory
+python batch_predict.py --input /path/to/images
+
+# Save results to a specific file
+python batch_predict.py --output my_results.csv
+
+# Process specific images
+python batch_predict.py --files image1.jpg image2.png image3.jpg
+
+# Show help
+python batch_predict.py --help
+```
+
+### Features:
+- **Command-line argument support**: No need to edit code to change image paths
+- **Error handling**: Clear error messages for missing files or invalid images
+- **Flexible options**: Customize model, labels, and number of predictions
+- **Better output formatting**: Clean, readable prediction results
+- **Help documentation**: Built-in help with `--help` flag
+- **Batch processing**: Process multiple images and export results to CSV
+
+### Legacy Code Example
+If you prefer to use the code programmatically, here's the original approach:
 
 ```python
 from keras.models import load_model
@@ -52,11 +123,12 @@ import numpy as np
 model = load_model("mive-doost-dari?.h5", compile=True)
 
 # Read the class names from the labels file
-class_names = open("labels.txt", "r").readlines()
+with open("labels.txt", "r") as f:
+    class_names = f.readlines()
 
 # Prepare the input image
 data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
-image = Image.open("moz.png").convert("RGB")  # Replace "moz.png" with your fruit photo address
+image = Image.open("moz.png").convert("RGB")  # Replace with your fruit photo path
 size = (224, 224)
 image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
 image_array = np.asarray(image)
@@ -70,11 +142,13 @@ top_indices = np.argsort(-prediction[0])[:3]
 # Print the top predictions
 print("Top Predictions:")
 for i in top_indices:
- class_name = class_names[i]
- confidence_score = prediction[0][i]
- print("Class:", class_name[2:], "Confidence Score:", confidence_score)
+    class_name = class_names[i].strip()
+    confidence_score = prediction[0][i]
+    # Remove index prefix from class name
+    if ' ' in class_name:
+        class_name = class_name.split(' ', 1)[1]
+    print(f"Class: {class_name}, Confidence Score: {confidence_score:.4f}")
 ```
-Make sure to replace "moz.png" with the actual path to your fruit photo.
 
 ## Training Details
 
@@ -146,4 +220,27 @@ These parameters were used during the training process to optimize the model's p
 The dataset used for training in this project consists of 9,478 photos.
 For the training of the dataset, approximately half of the photos were sourced from open data and publicly available datasets. The remaining photos were captured and collected specifically for this project, ensuring a diverse and comprehensive collection of fruit images. Additionally, new photos were created from the existing images to further augment the dataset and enhance the training process.
 ![conf-matrix](https://github.com/aryainjas/Fruitify/assets/36337300/cd1e98fd-6b73-4c19-b367-5ee763827eb0)
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
+
+## Project Structure
+
+```
+Fruitify/
+├── main.py              # Single prediction with CLI interface
+├── top3.py              # Top N predictions with CLI interface
+├── batch_predict.py     # Batch processing for multiple images
+├── requirements.txt     # Python dependencies
+├── labels.txt           # Fruit class labels (15 classes)
+├── mive-doost-dari?.h5 # Pre-trained MobileNetV2 model
+├── readme.md            # Project documentation
+├── CONTRIBUTING.md      # Contribution guidelines
+└── *.jpg, *.png         # Sample fruit images for testing
+```
+
+## License
+
+This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
 
